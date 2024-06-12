@@ -1,0 +1,35 @@
+h1,h2,h3,h4,h5 {
+    color: white;
+}
+
+.white{
+    color: white;
+}
+
+.centered-text {
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+    border-radius: 20px;
+}
+
+#uploadedVideo {
+    margin-top: 20px;
+    width: 100%;
+    height: 50%;
+}
+
+
+.white-frame {
+    border: 2px solid white;
+    padding: 10px; /* Add padding for better appearance */
+    text-align: center;
+}
+
+
+.bg-highlight {
+    background-color: #3f352c; /* Example background color */
+    color: #000; /* Text color for contrast */
+    padding: 10px; /* Padding around the text */ 
+    text-align: center;
+}

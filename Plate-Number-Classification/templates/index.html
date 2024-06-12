@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video and Text File Display</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body class="bg-highlight white">
+    
+    <div>
+        <h1>Number Plate Classification</h1>
+    </div>
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-md-6 d-flex flex-column align-items-center" id="videoContainer">
+                <h3>Input Video</h3>
+                <input class="text-center mt-2 white" type="file" id="videoUpload" accept="video/*" onchange="showVideo(this)" class="form-control-file">
+                <video id="uploadedVideo" controls></video>
+                <button class="btn btn-primary mt-3" id="myButton">Run</button>
+            </div>
+
+            
+            <div class="col-md-6" id="textContainer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3 class="text-center">Plate Number Output</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mt-4">
+                        <pre id="textFileContent" class="white text-center white-frame centered-text">Loading...</pre>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // function showVideo(input) {
+        //     const file = input.files[0];
+        //     if (file && file.type.startsWith('video/')) {
+        //         const uploadedVideo = document.getElementById('uploadedVideo');
+        //         uploadedVideo.src = URL.createObjectURL(file);
+        //         document.getElementById('videoContainer').style.display = 'flex';
+        //     }
+        // }
+
+        document.getElementById("myButton").addEventListener("click", function() {
+            // Get the selected video file
+            var fileInput = document.getElementById('videoUpload');
+            var file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a video file.');
+                return;
+            }
+
+            // Play the video immediately
+            var url = URL.createObjectURL(file);
+            var videoElement = document.getElementById('uploadedVideo');
+            videoElement.src = url;
+            videoElement.style.display = 'block';
+            videoElement.play();
+
+            // Create a FormData object and append the file to it
+            var formData = new FormData();
+            formData.append('video_file', file);
+
+            // Send a POST request to the server when the button is clicked
+            fetch('/button_click', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+        });
+
+        function loadTextFile() {
+            fetch('/text_file')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('textFileContent').textContent = data;
+                })
+                .catch(error => {
+                    console.error('Error fetching the text file:', error);
+                });
+        }
+
+        window.onload = function() {
+            loadTextFile();
+            setInterval(loadTextFile, 1000); // Refresh every 1 second
+        };
+
+        function showVideo(input) {
+            const videoFile = input.files[0];
+            const videoElement = document.getElementById('uploadedVideo');
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                videoElement.src = e.target.result;
+                videoElement.load();
+                videoElement.onloadeddata = function() {
+                    videoElement.defaultPlaybackRate = 0.37; // Set the playback rate to 2x slower
+                };
+            };
+            
+            reader.readAsDataURL(videoFile);
+        }
+
+        document.getElementById('myButton').addEventListener('click', function() {
+            const videoElement = document.getElementById('uploadedVideo');
+            videoElement.defaultPlaybackRate = 0.37; // Set the playback rate to 0.5x speed (2x slower)
+            videoElement.play();
+        });
+
+        
+
+        
+    </script>
+
+    
+</body>
+</html>
